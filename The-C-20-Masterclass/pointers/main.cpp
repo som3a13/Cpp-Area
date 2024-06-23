@@ -1,4 +1,7 @@
+#include <cstddef>
+#include <exception>
 #include <iostream>
+#include <stdexcept>
 
 int main(int argc, const char** argv) {
  
@@ -56,8 +59,12 @@ int main(int argc, const char** argv) {
 
     int arr[5] = {1, 2, 3, 4, 5};
     int (*ptr3)[5]=&arr;
-    std::cout << *(*ptr3+14) << std::endl;
+    std::cout << **(&arr) << std::endl;
+        std::cout << *arr << std::endl;
+
+    std::cout << (*ptr3)[3] << std::endl;
 std::cout << *(arr+3) << std::endl;
+
 
 
 
@@ -72,8 +79,106 @@ std::cout << *(arr+3) << std::endl;
 
     
 
+    //EX
+    /*
+    int * min_address;
+
+  // Don't modify anything above this line
+  //Your code should go below this line
+  //REMEMBER !ONLY POINTER ARITHMETIC SHOULD BE USED TO ACCESS ARRAY DATA
+    int min{*(data)};
+    for(std::size_t i{1};i<size;i++)
+    {
+        if(*(data+i)<min)
+        {
+            min=*(data+i);
+            min_address=(data+i);
+        }
+    }
+  */
 
 
+    //Dangling pointer
+
+    int *ptr4;
+    // std::cout << *ptr4 << std::endl; //undefined behaviour 
+
+    //NEW
+    try{
+                int *pt5=new int[10000000000000000];
+                    delete[] pt5;
+    std::cout << *pt5 << std::endl;  // pt5 now has data of garabage address
+    pt5=nullptr;
+
+    }catch(std::exception& ex){
+                    std::cout << "  Something went wrong : " << ex.what() << std::endl;
+    }
+    int *pt6= new(std::nothrow) int[1000000000000];
+    if(pt6==nullptr)
+    {
+        std::cout << "failed to alloc" << std::endl;
+    }
+
+    //swap
+    int x{1};
+    int y{2};
+    x=x+y;
+    y=x-y;
+    x=x-y;
+
+    std::cout << y << std::endl;
+    std::cout << x << std::endl;
+
+    x=x^y;
+    y=x^y;
+    x=x^y;
+        std::cout << y << std::endl;
+    std::cout << x << std::endl;
+
+    //EX
+/*
+        unsigned int size3=size2+size1;
+        int *ptr=new int[size3];
+    for(std::size_t i{};i<(size1+size2);i++)
+    {
+
+        if(i<size1)
+        {
+            ptr[i]=data1[i];
+        }
+        else
+        {
+            ptr[i]=data2[i-size1];
+        }
+    }
+    for(unsigned int i{};i<size3;i++)
+    {
+        std::cout << ptr[i] << " ";
+    }*/
+
+    
+
+
+    void *ptr7{};
+    // ptr7=new int(5);
+    // // delete (int*)ptr7;
+    // std::cout << ptr7 << std::endl;
+
+
+    try{
+        if(ptr7!=nullptr)
+        {
+            std::cout << "/* message */" << std::endl;
+        }
+        else
+        {
+            throw std::runtime_error("it's null");
+        }
+    }catch(std::exception &ex)
+    {
+        std::cout << "Error:"<<ex.what() << std::endl;
+    }
+    //Dynamically allocated arry dont support  ranged for or std::size
     return 0;
 
 
