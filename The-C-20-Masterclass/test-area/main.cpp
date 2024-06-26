@@ -8,5 +8,6 @@ int main(int argc, const char** argv) {
     std::cout << &y << std::endl; 
     std::cout << sizeof(x) << std::endl;
     std::cout << x << std::endl;
+    std::cout << *argv+1 << std::endl;
     return 0;
 }
