@@ -36,7 +36,7 @@ class Test
 /*Deep copy : implementation of copy constructor to solve that problem and each object has its data */
 /* Default copy constructor is shallow copy so it's needed to implement copy constructor if there is a pointer*/
 /*Refrence : easy to use no headache , same size of ptr as it is actually const ptr , less instruction so more optimization , should be initialezed with existed variable has valid address , no dynamic memory , alias , no nullptr can passed to it so it more safe
-   Pointer : headache when using dynamic memory allocation , should be initialized , should make derefrencing to acess data , equires additional checks for validity if nullptr b4 derefrencing
+   Pointer : headache when using dynamic memory allocation , should be initialized , more instructions,should make derefrencing to acess data , equires additional checks for validity if nullptr b4 derefrencing
 */
 /*Memory wise which is better ? pointer or ref :   using  ref with cout in cpp it has no address but the address which it refer to so we use gdb and check disassembly to see if ref takes a memory or no 
 And answer is yes ref takes memory to store that address in it :D, */
@@ -44,6 +44,7 @@ And answer is yes ref takes memory to store that address in it :D, */
 /* in gdb :x/xg $rbp - 0x***  */
 /*Output be like : 0xaddress of ref : 0xaddress of data*/
 
+// 0x0000555555555195  <_Z3funRi+12>:  mov    -0x8(%rbp),%rax , move value in ref adress[rbp-0x8] which is the number address then store in rax register  
 /*why by ref not by value ? as to avoid copying the object it self and to direct refer to original object*/
 /*Why const ? to promise not modify it */
 
@@ -69,6 +70,7 @@ And answer is yes ref takes memory to store that address in it :D, */
 /*if no copy assignment , pointers will be with same addr and will affect each other 
  on deleting one of them at Destruct cause an error Core dump
  With no copy operator handling with pointer is bad*/
+
 
 
     Test &operator=(const Test&obj)
@@ -374,10 +376,10 @@ class Test6:public Test5
 
     /*pointer copy const */
     /*more instruction as derefrencing occurs , can cause risk of nullptr to be passed */
-    Test6(const Test6 *obj)
+    Test6(const Test6 &obj)
     {
-        this->x=obj->x;
-        this->y=obj->y;
+        this->x=obj.x;
+        this->y=obj.y;
 
     }
 
@@ -386,20 +388,22 @@ class Test6:public Test5
 };
 
 
-
+typedef  void(*fptr)(const Test &);
 
 int main(int argc, const char** argv) {
      
     Test t0; /*Default*/
 
     Test t1(1,"som3a",new int(8)); /*Initializer list */
+    std::cout << &t1 << std::endl;
 
     Test t2(t1);    /*Copy*/
-
+    std::cout << &t2 << std::endl;
     Test t3;
     t3=t2;  /*Overload = */
-    
+    std::cout << &t3 << std::endl;
     t3.getter();
+    std::cout << "/* message */" << std::endl;
     Test t4(std::move(t3));
 
     t1.getter();
@@ -465,14 +469,17 @@ int main(int argc, const char** argv) {
     Test5 *ptr2=new Test6();
     ptr2->number5;
 
+    delete ptr2;
 
     /*testing copy constructor using pointer*/
     Test6 t10;
 
     Test6 t11(t10);
-    // Test6 t12(nullptr); /*segmentation fault risk o.o*/
     std::cout << t11.x << std::endl;
+    // Test6 t12(nullptr); /*segmentation fault risk o.o*/
+    fptr pt1=&friendMethod;
 
+    (*pt1)(t0);
     return 0;
 }
 
