@@ -13,10 +13,10 @@
 #include <system_error>
 #include <utility>
 #include <vector>
+#include <list>
+#include <deque>
 
-
-
-
+#include <map>
 template <typename  T> T print(T x)
 {
     std::cout << x << std::endl;
@@ -245,7 +245,32 @@ int main(int argc, const char** argv) {
 
 
 
+    /*std::deque*/
 
+
+    /*push / pop from back or front ,memory wise bad */
+    std::deque<int> deq{1,2,3,4,5,6};
+
+    /*std::list  double linked list*/
+    /*can push/pop  from front or back  good for insertion randomly */
+
+        std::list<int> l1{1,2,3,99,4,5,6};
+
+        auto it3=l1.begin();
+        std::advance(it3,2);
+        std::cout << *it3 << std::endl;
+        it3=l1.begin();
+        std::advance(it3,3);
+        std::cout << *it3 << std::endl;
+
+    /*std::set  ordered set using key binary tree */
+    /*no element access*/
+
+
+
+    /*map*/
+    std::map<>
+    
 
 
 
