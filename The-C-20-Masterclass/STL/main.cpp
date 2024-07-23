@@ -269,7 +269,9 @@ int main(int argc, const char** argv) {
 
 
     /*map*/
-    std::map<>
+    std::map<int,std::string> m1{};
+    m1[1]="s";
+    // m1={{1,"s"},{2,"m"}};
     
 
 
