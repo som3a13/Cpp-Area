@@ -201,6 +201,7 @@ And answer is yes ref takes memory to store that address in it :D, */
         static Test* objptr;
         const static int val2=10;
         mutable int val3{};
+        const int number1 =20;
 
 
 };
@@ -369,10 +370,10 @@ class Test5
 {   
     public:
 
-    Test5(){}
+    Test5(){std::cout << "Test5 const" << std::endl;}
     int number5{};
-    virtual void test(){};
-        ~Test5(){}
+     virtual void test(){};
+     virtual ~Test5(){std::cout << "Test5 Dest" << std::endl;}
 
 };
 
@@ -382,7 +383,7 @@ class Test6:public Test5
     public:
     int x{};
     int y{};
-    Test6(){}
+    Test6(){std::cout << "Test6 const" << std::endl;}
     Test6(int x,int y):x(x),y(y){}
 
 
@@ -396,7 +397,7 @@ class Test6:public Test5
     }
 
     int number6{};
-    ~Test6(){}
+    ~Test6(){std::cout << "Test6 Dest" << std::endl;}
 };
 
 
@@ -477,7 +478,7 @@ int main(int argc, const char** argv) {
     ptr1->pureFunction();
 
 
-    /*as there's no override function in Test6 class so vtable of Test6 will points to Test5::test() */
+    /*as there's no override function in Test6 class so "_vptr.Test5 = 0x555555557d00 <vtable for Test6+16>"vtable of Test6 will points to Test5::test() */
     Test5 *ptr2=new Test6();
     ptr2->number5;
 
@@ -493,13 +494,31 @@ int main(int argc, const char** argv) {
 
     (*pt1)(t0);
 
-   
+    std::cout  << std::endl;
+
+    /*Dynamic cast */
+    Test5 *ptr3=new Test6();
+    Test6 * ptr4= dynamic_cast<Test6*>(ptr3) ;
+    /*POINTER now can points to any member of base or derived class*/
+    ptr4->y;
+    delete ptr3;
+    delete ptr4;
+
+
+
 
 
     return 0;
 }
+/*
 
+dynamic_cast: Ensures basePtr is actually a Derived object at runtime.
+static_cast: Assumes basePtr is Derived without checking.
+reinterpret_cast: Converts any pointer to another type, useful for low-level operations but risky.
 
+*/
+
+/*if other class inherited form other an virtual destructors exist or no ,all constructors will be destructed [if ptr to same type or direct object creation] , But if we have a ptr to base = new Derived so we should add virtual to base dest to ensure the derived is destructed too */
 
 
 
@@ -565,3 +584,8 @@ designed to be a base class for other classes*/
 
 
 /* C++ input and output are type safety that means we don’t need to specify the type of variable we are printing.*/
+
+
+/*any thing in stack can be changed even if const ,*/
+/*const global/static  segementation fault as it 's in .rodata*/
+/*reinterpet cast from higher to lower pointer casting*/
