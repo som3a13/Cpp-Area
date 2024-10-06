@@ -30,6 +30,7 @@ class Test
     Test(int id1,std::string name1,int *ptr1):id(id1),name(name1),ptr(ptr1)
     {
         std::cout << "Hi From Initilizer list Constructor" << std::endl;
+        // this->val1=10;
     }
 
 /*Shallow copy : copies everything as it is , so if pointer exist it will take same address*/
@@ -91,7 +92,6 @@ And answer is yes ref takes memory to store that address in it :D, */
              this->ptr=new int(*obj.ptr);
 
         }
-
         std::cout << "Hi From Operator= copy overload " << std::endl;
         return *this;
     }
@@ -161,11 +161,17 @@ And answer is yes ref takes memory to store that address in it :D, */
 
     /*Implementation of Methods better be outside the class to be detected in .text if they are not used */
     /*in case all code in same place ***/
+
+
+    /*cant use "this" ptr to static member function just static members*/
     static Test* objPtr();
+    
+    
     int modify() const;
     void getter();
     void setter(int id1,std::string name1,int*ptr1);
-    
+
+
     /*Friend method : function not related to class but it can access private members of class*/
 
     friend void friendMethod(const Test&obj);
@@ -175,6 +181,7 @@ And answer is yes ref takes memory to store that address in it :D, */
     virtual void vfun()
     {
         std::cout << "Hi from Base virtual function" << std::endl;
+        
     }
 
     /*public members*/
@@ -194,12 +201,14 @@ And answer is yes ref takes memory to store that address in it :D, */
         static Test* objptr;
         const static int val2=10;
         mutable int val3{};
+        const int number1 =20;
 
 
 };
 /*Static members initialization*/
 Test* Test::objptr=nullptr;
 int Test::val1{};
+
 
 /*Const function changes only static / mutable members*/
 /*const Instance/Object can only access const/static methods but if normal Instance can access all methods */
@@ -229,10 +238,14 @@ void Test::setter(int id1,std::string name1,int*ptr1)
 
     }
     this->ptr=ptr1;
+
 }
+
+/*cant use this ptr to static member function just static members*/
 
 Test* Test::objPtr()
 {
+    
     static Test obj1;
     if(objptr==nullptr)
     {
@@ -357,10 +370,10 @@ class Test5
 {   
     public:
 
-    Test5(){}
+    Test5(){std::cout << "Test5 const" << std::endl;}
     int number5{};
-    virtual void test(){};
-        ~Test5(){}
+     virtual void test(){};
+     virtual ~Test5(){std::cout << "Test5 Dest" << std::endl;}
 
 };
 
@@ -370,7 +383,7 @@ class Test6:public Test5
     public:
     int x{};
     int y{};
-    Test6(){}
+    Test6(){std::cout << "Test6 const" << std::endl;}
     Test6(int x,int y):x(x),y(y){}
 
 
@@ -384,7 +397,7 @@ class Test6:public Test5
     }
 
     int number6{};
-    ~Test6(){}
+    ~Test6(){std::cout << "Test6 Dest" << std::endl;}
 };
 
 
@@ -393,7 +406,6 @@ typedef  void(*fptr)(const Test &);
 int main(int argc, const char** argv) {
      
     Test t0; /*Default*/
-
     Test t1(1,"som3a",new int(8)); /*Initializer list */
     std::cout << &t1 << std::endl;
 
@@ -440,6 +452,7 @@ int main(int argc, const char** argv) {
     Test1 t8(2);
     std::cout <<     t8.num2 << std::endl;
     
+    
 
     /*ptr will access any member of type Test*/
     /*Better to do that with abstract / interface class*/
@@ -465,25 +478,49 @@ int main(int argc, const char** argv) {
     ptr1->pureFunction();
 
 
-    /*as there's no override function in Test6 class so vtable of Test6 will points to Test5::test() */
+    /*as there's no override function in Test6 class so "_vptr.Test5 = 0x555555557d00 <vtable for Test6+16>"vtable of Test6 will points to Test5::test() */
     Test5 *ptr2=new Test6();
     ptr2->number5;
-
+    
+    
     delete ptr2;
 
     /*testing copy constructor using pointer*/
     Test6 t10;
-
+    t10.Test5::test();
     Test6 t11(t10);
     std::cout << t11.x << std::endl;
     // Test6 t12(nullptr); /*segmentation fault risk o.o*/
     fptr pt1=&friendMethod;
 
     (*pt1)(t0);
+
+    std::cout  << std::endl;
+
+    /*Dynamic cast */
+    Test5 *ptr3=new Test6();
+    Test6 * ptr4= dynamic_cast<Test6*>(ptr3) ;
+    /*POINTER now can points to any member of base or derived class*/
+    ptr4->y;
+    // delete ptr3;
+    delete ptr4; /*segemntation fault ?*/
+    
+
+
+
+
+
     return 0;
 }
+/*
 
+dynamic_cast: Ensures basePtr is actually a Derived object at runtime.
+static_cast: Assumes basePtr is Derived without checking.
+reinterpret_cast: Converts any pointer to another type, useful for low-level operations but risky.
 
+*/
+
+/*if other class inherited form other an virtual destructors exist or no ,all constructors will be destructed [if ptr to same type or direct object creation] , But if we have a ptr to base = new Derived so we should add virtual to base dest to ensure the derived is destructed too */
 
 
 
@@ -493,4 +530,82 @@ int main(int argc, const char** argv) {
 designed to be a base class for other classes*/
 
 /*Abstract class / interface class is an abstraction class with only pure functions and virtual destructor with no constructor,
- designed to be a base class for other classes*/
+ designed to be a base class for other classes  ,cannot make an object from it*/
+
+/*if base is virtual  so Derived will be destrucd then base*/
+/*to ensure resource clean up*/
+
+/*cant use this ptr to static member function just static members*/
+
+
+/*cout << f%f   gives an error */
+
+/*constructor : initialize object*/
+/*C++ adapted bottom-up*/
+/*static method cant be const */
+/*functions should be defined if they are used to avoid linker error*/
+/*default argument if in function prototype so no need in function definetions as it will give error*/
+/*pure virtual functions in abstract class must be defined in derived classes*/
+
+/*virtual functions can be overloaded and overriding*/
+/*cannot initialize and arry with ref as ref should be initialized */
+
+/*printf  associativity is compiler dependent but with gcc from right to left */
+/*cout from left to right*/
+
+
+/*main cannot take default argument as the right arg is an arr*/
+
+/*trailing argument from right to left*/
+
+
+/*****General Notes*** */
+
+/*
+    int x1=90;
+    int *lol=&x1;
+    std::cout << *lol << std::endl;
+
+    delete lol; //Cant delete area from stack
+    */
+
+/*By default, all the files in C++ are opened in text mode. They read the file as normal text.*/
+
+/*Using & on a register variable may be invalid, since the compiler may store the variable in a register*/
+
+/*class is private by default*/
+
+/*
+    static int a = 5;
+	auto check = [=]() 
+        {
+		a = 10;   
+	};
+    a val will be 10 , if a not static we shpuld add mutable keyword but value for a will be localy inside lamda
+    */
+
+
+/* C++ input and output are type safety that means we don’t need to specify the type of variable we are printing.*/
+
+
+/*any thing in stack can be changed even if const by doing const_cast but the val itself will not be changed as it will be moved to register and when getting val again it will be same but ptr val will be changed */
+/*const global/static  segementation fault as it 's in .rodata*/
+/*reinterpet cast from higher to lower pointer casting*/
+
+
+/*switch/if/if with conxtexpt with initializer c++17*/
+
+
+/*GDB*/
+/*
+stat
+ctrl+x+a to  see the code when using gdb
+
+gdb a.out
+start   n for next
+set demangle-style auto   | set print asm-demangle on | set print pretty on
+p &d2   > address of d2
+
+x/32 address   to see the stack x > examine memory /32 to convert hex to decimal in memory
+
+*/

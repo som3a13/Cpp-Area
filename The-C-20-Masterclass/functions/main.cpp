@@ -261,6 +261,7 @@ int main(int argc, const char** argv) {
    int i2= std::max(lst2);
     std::cout << i2 << std::endl;
 
+    std::sort(lst2.begin(),lst2.end());
 
 
     std::string name{"SOm3a"};

@@ -406,7 +406,6 @@ typedef  void(*fptr)(const Test &);
 int main(int argc, const char** argv) {
      
     Test t0; /*Default*/
-
     Test t1(1,"som3a",new int(8)); /*Initializer list */
     std::cout << &t1 << std::endl;
 
@@ -453,6 +452,7 @@ int main(int argc, const char** argv) {
     Test1 t8(2);
     std::cout <<     t8.num2 << std::endl;
     
+    
 
     /*ptr will access any member of type Test*/
     /*Better to do that with abstract / interface class*/
@@ -481,12 +481,13 @@ int main(int argc, const char** argv) {
     /*as there's no override function in Test6 class so "_vptr.Test5 = 0x555555557d00 <vtable for Test6+16>"vtable of Test6 will points to Test5::test() */
     Test5 *ptr2=new Test6();
     ptr2->number5;
-
+    
+    
     delete ptr2;
 
     /*testing copy constructor using pointer*/
     Test6 t10;
-
+    t10.Test5::test();
     Test6 t11(t10);
     std::cout << t11.x << std::endl;
     // Test6 t12(nullptr); /*segmentation fault risk o.o*/
@@ -501,8 +502,9 @@ int main(int argc, const char** argv) {
     Test6 * ptr4= dynamic_cast<Test6*>(ptr3) ;
     /*POINTER now can points to any member of base or derived class*/
     ptr4->y;
-    delete ptr3;
-    delete ptr4;
+    // delete ptr3;
+    delete ptr4; /*segemntation fault ?*/
+    
 
 
 
@@ -528,7 +530,7 @@ reinterpret_cast: Converts any pointer to another type, useful for low-level ope
 designed to be a base class for other classes*/
 
 /*Abstract class / interface class is an abstraction class with only pure functions and virtual destructor with no constructor,
- designed to be a base class for other classes*/
+ designed to be a base class for other classes  ,cannot make an object from it*/
 
 /*if base is virtual  so Derived will be destrucd then base*/
 /*to ensure resource clean up*/
@@ -586,6 +588,24 @@ designed to be a base class for other classes*/
 /* C++ input and output are type safety that means we don’t need to specify the type of variable we are printing.*/
 
 
-/*any thing in stack can be changed even if const ,*/
+/*any thing in stack can be changed even if const by doing const_cast but the val itself will not be changed as it will be moved to register and when getting val again it will be same but ptr val will be changed */
 /*const global/static  segementation fault as it 's in .rodata*/
 /*reinterpet cast from higher to lower pointer casting*/
+
+
+/*switch/if/if with conxtexpt with initializer c++17*/
+
+
+/*GDB*/
+/*
+stat
+ctrl+x+a to  see the code when using gdb
+
+gdb a.out
+start   n for next
+set demangle-style auto   | set print asm-demangle on | set print pretty on
+p &d2   > address of d2
+
+x/32 address   to see the stack x > examine memory /32 to convert hex to decimal in memory
+
+*/
