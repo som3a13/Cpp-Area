@@ -72,8 +72,13 @@ And answer is yes ref takes memory to store that address in it :D, */
  on deleting one of them at Destruct cause an error Core dump
  With no copy operator handling with pointer is bad*/
 
+/*to print obj 
+std::ostream& operator<<(std::ostream &out,const Complex&obj)
+{
+   return out << obj.a << "+i" << obj.b;
+}*/
 
-
+/*& invoke that the return will be assigned directly to the object without creating a temp obj ,, and op= works  when Complex a;// a=b*/
     Test &operator=(const Test&obj)
     {
         if(this==&obj)
@@ -202,12 +207,14 @@ And answer is yes ref takes memory to store that address in it :D, */
         const static int val2=10;
         mutable int val3{};
         const int number1 =20;
+        static int val4;
 
 
 };
 /*Static members initialization*/
 Test* Test::objptr=nullptr;
 int Test::val1{};
+int Test::val4{};
 
 
 /*Const function changes only static / mutable members*/
@@ -224,7 +231,7 @@ return 0;
 
 void Test::getter()
 {
-    std::cout << this->id <<" "<< this->name <<" "<< this->ptr << " "<<     (this->ptr != nullptr ? *(this->ptr) : 0)  << std::endl;
+    std::cout << this->id <<" "<< this->name <<" "<< this->ptr << " val:"<<val4<<" "<<     (this->ptr != nullptr ? *(this->ptr) : 0)  << std::endl;
 }
 
 void Test::setter(int id1,std::string name1,int*ptr1)
@@ -505,7 +512,6 @@ int main(int argc, const char** argv) {
     // delete ptr3;
     delete ptr4; /*segemntation fault ?*/
     
-
 
 
 
